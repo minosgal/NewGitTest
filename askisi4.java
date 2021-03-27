@@ -1,0 +1,75 @@
+import java.util.Arrays;
+import java.util.Scanner;
+public class askisi4{
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("-- Shiritori --");
+        char playAgain = 'n';
+        do{
+            int i = 0;
+            while(!Shiritori.game_over){            
+                System.out.print("Type a word: ");
+                String word = input.next();
+                Shiritori.play(word, i);
+                i++;
+            }
+            Shiritori.getWords(Shiritori.words, i);
+            Shiritori.restart(Shiritori.words);
+            System.out.print("\n>> Do you want to play again? yes(y)-no(n): ");
+            playAgain = input.next().charAt(0);
+        }while(playAgain != 'n');        
+        input.close();
+    }
+}
+
+class Shiritori{
+    static String[] words = new String[50]; //καθε γυρος επιτρεπει 50 λεξεις το πολυ(λογικα αρκετες)
+    static boolean game_over = false;
+    static int reasonExit = 0;  //reasonExit (1) επαναληψη λεξης / (2) τελευταιο γραμμα != πρωτο γραμμα
+
+    public static void play(String word, int index){
+        if(index == 0){
+            words[index] = word;    //η πρωτη λεξη παντα αποθηκευεται
+        }
+        else{
+            if(word.charAt(0) != words[index - 1].charAt(words[index - 1].length() - 1)){
+                //GameOver αν τελευταιο γραμμα = πρωτο οποτε reasonExit παραμενει 0
+                game_over = true;
+            }
+            for(int i = 0; i <= index - 1; i++){
+                if(word.equals(words[i])){
+                    //GameOver αν καινουρια λεξη = καποια αλλη ηδη ειπωμενη λεξη reasonExit γινεται 1
+                    game_over = true;
+                    reasonExit = 1;
+                }
+            }
+            if(game_over && reasonExit == 1){
+                System.out.println("> "+ word +" has alread been said");
+                System.out.println("> Game Over <");
+                //τσεκαρει τον λογο του GameOver                
+            }
+            else if(game_over && reasonExit == 0){
+                System.out.println("> last letter of "+ words[index - 1] +" is not the same as first letter of "+ word);
+                System.out.println("> Game Over <");
+                //τσεκαρει τον λογο του GameOver                
+            }
+            else{
+                words[index] = word;
+            }
+        }
+    }
+
+    public static void getWords(String[] words, int index){
+        System.out.println("\n -- Words Entered -- ");
+        for(int i = 0; i < index - 1; i++){
+            System.out.printf("<%d> %s\n", i + 1, words[i]);
+        }
+    }
+
+    public static void restart(String[] words){
+        Arrays.fill(words, null);
+        game_over = false;
+        System.out.println("> Game restarted");
+    }
+}
+
